@@ -1,9 +1,9 @@
-﻿using BRRAPI.Models;
+﻿using BRRAPI.Services;
 
 namespace BRRAPI.Core
 {
-    public class ServiceLocator
+    public static class ServiceLocator
     {
-        public static BarangayService Service = new BarangayService();
+        public static readonly BarangayService Service = new BarangayService();
     }
 }

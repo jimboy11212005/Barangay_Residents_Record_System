@@ -1,11 +1,13 @@
-﻿using BRRAPI.Core;
+﻿using System.Linq;
+using BRRAPI.Core;
 using BRRAPI.Models;
+using BRRAPI.Services;
 
 namespace BRRAPI.Controllers
 {
     public class DashboardController
     {
-        private BarangayService service = ServiceLocator.Service;
+        private readonly BarangayService service = ServiceLocator.Service;
 
         public int GetTotalResidents()
         {

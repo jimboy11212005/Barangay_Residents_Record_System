@@ -1,54 +1,157 @@
-﻿using BRRAPI.Models;
-using BRRAPI.Core;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using Microsoft.AspNetCore.Mvc;
+using BRRAPI.Models;
+using BRRAPI.Services;
 
 namespace BRRAPI.Controllers
 {
-    public class ResidentController
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ResidentController : ControllerBase
     {
-        // ✅ FIX: use correct ServiceLocator property
-        private BarangayService service = ServiceLocator.Service;
+        private readonly BarangayService _barangayService;
 
-        public void AddResident(Resident resident)
+        // Use DI for the service. Program.cs will register BarangayService.
+        public ResidentController(BarangayService barangayService)
         {
-            service.AddResident(resident);
+            _barangayService = barangayService ?? throw new ArgumentNullException(nameof(barangayService));
         }
 
-        public void UpdateResident(Resident resident)
+        [HttpPost("add")]
+        public IActionResult AddResident([FromBody] Resident resident)
         {
-            service.UpdateResident(resident);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (resident == null)
+                return BadRequest("Resident cannot be null.");
+
+            try
+            {
+                _barangayService.AddResident(resident);
+                return CreatedAtAction(nameof(GetResidentById), new { id = resident.ResidentId }, resident);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while adding the resident: {ex.Message}");
+            }
         }
 
-        public void DeleteResident(int residentId)
+        [HttpPut("update/{id}")]
+        public IActionResult UpdateResident(int id, [FromBody] Resident resident)
         {
-            service.DeleteResident(residentId);
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
+            if (resident == null)
+                return BadRequest("Resident cannot be null.");
+
+            if (id != resident.ResidentId)
+                return BadRequest("Resident ID mismatch.");
+
+            try
+            {
+                _barangayService.UpdateResident(resident);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while updating the resident: {ex.Message}");
+            }
         }
 
-        public List<Resident> GetAllResidents()
+        [HttpDelete("delete/{residentId}")]
+        public IActionResult DeleteResident(int residentId)
         {
-            return service.GetResidents();
+            try
+            {
+                _barangayService.DeleteResident(residentId);
+                return NoContent();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while deleting the resident: {ex.Message}");
+            }
         }
 
-        public List<Resident> SearchResident(string keyword)
+        [HttpGet("all")]
+        public ActionResult<List<Resident>> GetAllResidents()
         {
-            return service.GetResidents()
-                .Where(r => r.FullName.ToLower().Contains(keyword.ToLower()))
-                .ToList();
+            try
+            {
+                var residents = _barangayService.GetResidents();
+                return Ok(residents);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while retrieving residents: {ex.Message}");
+            }
         }
 
-        public List<Resident> FilterByCategory(string category)
+        [HttpGet("search")]
+        public ActionResult<List<Resident>> SearchResident([FromQuery] string keyword)
         {
-            return service.GetResidents()
-                .Where(r => r.GetCategory() == category)
-                .ToList();
+            if (string.IsNullOrWhiteSpace(keyword))
+                return BadRequest("Keyword is required.");
+
+            try
+            {
+                var residents = _barangayService.SearchResident(keyword);
+                return Ok(residents);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while searching residents: {ex.Message}");
+            }
         }
 
-        public List<Resident> GetPWDResidents()
+        [HttpGet("filter")]
+        public ActionResult<List<Resident>> FilterByCategory([FromQuery] string category)
         {
-            return service.GetResidents()
-                .Where(r => r.IsPWD)
-                .ToList();
+            if (string.IsNullOrWhiteSpace(category))
+                return BadRequest("Category is required.");
+
+            try
+            {
+                var residents = _barangayService.GetByCategory(category);
+                return Ok(residents);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while filtering residents: {ex.Message}");
+            }
+        }
+
+        [HttpGet("pwd")]
+        public ActionResult<List<Resident>> GetPWDResidents()
+        {
+            try
+            {
+                var residents = _barangayService.GetPWDResidents();
+                return Ok(residents);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while retrieving PWD residents: {ex.Message}");
+            }
+        }
+
+        [HttpGet("{id}")]
+        public ActionResult<Resident> GetResidentById(int id)
+        {
+            try
+            {
+                var resident = _barangayService.GetResidentById(id);
+                if (resident == null)
+                    return NotFound($"Resident with ID {id} not found.");
+
+                return Ok(resident);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"An error occurred while retrieving resident: {ex.Message}");
+            }
         }
     }
 }

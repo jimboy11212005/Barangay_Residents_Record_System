@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using BRRAPI.Core;
 using BRRAPI.Models;
+using BRRAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BRRAPI.Controllers
@@ -9,7 +10,7 @@ namespace BRRAPI.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private BarangayService service = ServiceLocator.Service;
+        private readonly BarangayService service = ServiceLocator.Service;
 
         [HttpPost("login")]
         public bool Login(string username, string password)
