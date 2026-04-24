@@ -4,6 +4,7 @@ namespace BRRAPI.Core
 {
     public static class ServiceLocator
     {
-        public static readonly BarangayService Service = new BarangayService();
+        // set from Program.cs so legacy code using this locator works
+        public static BarangayService Service { get; set; }
     }
 }

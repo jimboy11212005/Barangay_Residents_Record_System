@@ -1,49 +1,54 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using BRRAPI.Core;
+using Microsoft.AspNetCore.Mvc;
 using BRRAPI.Models;
 using BRRAPI.Services;
 
 namespace BRRAPI.Controllers
 {
-    public class HouseholdController
+    [ApiController]
+    [Route("api/[controller]")]
+    public class HouseholdController : ControllerBase
     {
-        private readonly BarangayService service = ServiceLocator.Service;
+        private readonly BarangayService _service;
+        public HouseholdController(BarangayService service) => _service = service ?? throw new ArgumentNullException(nameof(service));
 
-        public HouseholdController() { }
-
-        public void AddHousehold(Household household)
+        [HttpPost("add")]
+        public IActionResult AddHousehold([FromBody] Household household)
         {
-            if (household == null) throw new ArgumentNullException(nameof(household));
-            service.AddHousehold(household);
+            if (household == null) return BadRequest("Household cannot be null.");
+            _service.AddHousehold(household);
+            return CreatedAtAction(nameof(GetHouseholdById), new { id = household.HouseholdId }, household);
         }
 
-        public List<Household> GetAllHouseholds()
+        [HttpGet("all")]
+        public ActionResult<List<Household>> GetAllHouseholds() => Ok(_service.GetHouseholds());
+
+        [HttpGet("{id}")]
+        public ActionResult<Household> GetHouseholdById(int id)
         {
-            return service.GetHouseholds();
+            var hh = _service.GetHouseholdById(id);
+            if (hh == null) return NotFound();
+            return Ok(hh);
         }
 
-        public Household GetHouseholdById(int householdId)
+        [HttpGet("{id}/members")]
+        public ActionResult<List<Resident>> GetHouseholdMembers(int id)
         {
-            return service.GetHouseholdById(householdId);
+            var hh = _service.GetHouseholdById(id);
+            if (hh == null) return NotFound();
+            return Ok(hh.Members ?? new List<Resident>());
         }
 
-        public List<Resident> GetHouseholdMembers(int householdId)
+        [HttpGet("search")]
+        public ActionResult<List<Household>> SearchHousehold([FromQuery] string keyword)
         {
-            var household = GetHouseholdById(householdId);
-            return household?.Members?.ToList() ?? new List<Resident>();
-        }
-
-        public List<Household> SearchHousehold(string keyword)
-        {
-            if (string.IsNullOrWhiteSpace(keyword)) return new List<Household>();
-
-            var term = keyword.Trim();
-            return service.GetHouseholds()
-                .Where(h => !string.IsNullOrWhiteSpace(h.HouseholdName) &&
-                            h.HouseholdName.Contains(term, StringComparison.OrdinalIgnoreCase))
+            if (string.IsNullOrWhiteSpace(keyword)) return BadRequest("Keyword is required.");
+            var result = _service.GetHouseholds()
+                .Where(h => !string.IsNullOrWhiteSpace(h.HouseholdName) && h.HouseholdName.Contains(keyword, StringComparison.OrdinalIgnoreCase))
                 .ToList();
+            return Ok(result);
         }
     }
 }

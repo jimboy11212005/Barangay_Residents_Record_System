@@ -1,22 +1,21 @@
 ﻿using System.Collections.Generic;
-using BRRAPI.Core;
+using Microsoft.AspNetCore.Mvc;
 using BRRAPI.Models;
 using BRRAPI.Services;
 
 namespace BRRAPI.Controllers
 {
-    public class ReportController
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ReportController : ControllerBase
     {
-        private readonly BarangayService service = ServiceLocator.Service;
+        private readonly BarangayService _service;
+        public ReportController(BarangayService service) => _service = service;
 
-        public List<Resident> GenerateResidentReport()
-        {
-            return service.GetResidents();
-        }
+        [HttpGet("residents")]
+        public ActionResult<List<Resident>> GenerateResidentReport() => Ok(_service.GetResidents());
 
-        public List<Household> GenerateHouseholdReport()
-        {
-            return service.GetHouseholds();
-        }
+        [HttpGet("households")]
+        public ActionResult<List<Household>> GenerateHouseholdReport() => Ok(_service.GetHouseholds());
     }
 }

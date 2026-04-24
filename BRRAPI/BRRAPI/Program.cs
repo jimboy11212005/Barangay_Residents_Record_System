@@ -1,5 +1,5 @@
-
 using BRRAPI.Data;
+using BRRAPI.Services;
 using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,6 +13,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
         ServerVersion.AutoDetect(connectionString)
     )
 );
+
+// register the service that uses the DbContext (scoped is correct)
+builder.Services.AddScoped<BarangayService>();
 
 // Controllers
 builder.Services.AddControllers();

@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using BRRAPI.Data;
 using BRRAPI.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BRRAPI.Services
 {
     public class BarangayService
     {
-        // 🧠 In-memory storage (temporary DB)
-        private readonly List<Resident> residents = new();
-        private readonly List<Household> households = new();
-        private readonly List<User> users = new();
+        private readonly AppDbContext _db;
+
+        public BarangayService(AppDbContext db)
+        {
+            _db = db ?? throw new ArgumentNullException(nameof(db));
+        }
 
         // =========================
         // 👤 RESIDENT OPERATIONS
@@ -19,47 +23,18 @@ namespace BRRAPI.Services
         public void AddResident(Resident resident)
         {
             if (resident == null) throw new ArgumentNullException(nameof(resident));
-            if (residents.Any(r => r.ResidentId == resident.ResidentId))
-                throw new InvalidOperationException($"Resident with id {resident.ResidentId} already exists.");
 
-            residents.Add(resident);
-
-            // maintain household membership consistency
-            if (resident.HouseholdId != 0)
-            {
-                var hh = GetHouseholdById(resident.HouseholdId);
-                if (hh != null)
-                {
-                    hh.Members ??= new List<Resident>();
-                    if (!hh.Members.Any(m => m.ResidentId == resident.ResidentId))
-                        hh.Members.Add(resident);
-                }
-            }
+            _db.Residents.Add(resident);
+            _db.SaveChanges();
         }
 
         public void UpdateResident(Resident updated)
         {
             if (updated == null) throw new ArgumentNullException(nameof(updated));
 
-            var resident = residents.FirstOrDefault(r => r.ResidentId == updated.ResidentId);
+            var resident = _db.Residents.Find(updated.ResidentId);
             if (resident == null) return;
 
-            // if household changed, move resident between households
-            if (resident.HouseholdId != updated.HouseholdId)
-            {
-                var oldHousehold = GetHouseholdById(resident.HouseholdId);
-                oldHousehold?.Members?.RemoveAll(m => m.ResidentId == resident.ResidentId);
-
-                var newHousehold = GetHouseholdById(updated.HouseholdId);
-                if (newHousehold != null)
-                {
-                    newHousehold.Members ??= new List<Resident>();
-                    if (!newHousehold.Members.Any(m => m.ResidentId == updated.ResidentId))
-                        newHousehold.Members.Add(updated);
-                }
-            }
-
-            // update fields
             resident.FullName = updated.FullName;
             resident.BirthDate = updated.BirthDate;
             resident.Address = updated.Address;
@@ -68,45 +43,51 @@ namespace BRRAPI.Services
             resident.MedicalCondition = updated.MedicalCondition;
             resident.Medication = updated.Medication;
             resident.HouseholdId = updated.HouseholdId;
+
+            _db.SaveChanges();
         }
 
         public void DeleteResident(int id)
         {
-            var resident = residents.FirstOrDefault(r => r.ResidentId == id);
+            var resident = _db.Residents.Find(id);
             if (resident == null) return;
 
-            var hh = GetHouseholdById(resident.HouseholdId);
-            hh?.Members?.RemoveAll(m => m.ResidentId == id);
-
-            residents.Remove(resident);
+            _db.Residents.Remove(resident);
+            _db.SaveChanges();
         }
 
+        public Resident GetResidentById(int id)
+        {
+            return _db.Residents.AsNoTracking().FirstOrDefault(r => r.ResidentId == id);
+        }
 
         public List<Resident> GetResidents()
         {
-            // return a snapshot to avoid external mutation of internal list
-            return residents.ToList();
+            return _db.Residents.AsNoTracking().ToList();
         }
 
-        // 🔍 SEARCH (SAFE VERSION)
+        // 🔍 SEARCH
         public List<Resident> SearchResident(string keyword)
         {
             if (string.IsNullOrWhiteSpace(keyword))
                 return new List<Resident>();
 
-            return residents
-                .Where(r => !string.IsNullOrWhiteSpace(r.FullName)
-                            && r.FullName.Contains(keyword, StringComparison.OrdinalIgnoreCase))
+            var lowered = keyword.Trim().ToLowerInvariant();
+            return _db.Residents
+                .AsNoTracking()
+                .Where(r => r.FullName != null && r.FullName.ToLower().Contains(lowered))
                 .ToList();
         }
 
-        // 📊 FILTER BY CATEGORY
+        // 📊 FILTER BY CATEGORY (in-memory because GetCategory uses logic)
         public List<Resident> GetByCategory(string category)
         {
             if (string.IsNullOrWhiteSpace(category))
                 return new List<Resident>();
 
-            return residents
+            return _db.Residents
+                .AsNoTracking()
+                .AsEnumerable()
                 .Where(r => string.Equals(r.GetCategory(), category, StringComparison.OrdinalIgnoreCase))
                 .ToList();
         }
@@ -114,7 +95,8 @@ namespace BRRAPI.Services
         // ♿ PWD LIST
         public List<Resident> GetPWDResidents()
         {
-            return residents
+            return _db.Residents
+                .AsNoTracking()
                 .Where(r => r.IsPWD)
                 .ToList();
         }
@@ -126,33 +108,25 @@ namespace BRRAPI.Services
         public void AddHousehold(Household household)
         {
             if (household == null) throw new ArgumentNullException(nameof(household));
-            if (households.Any(h => h.HouseholdId == household.HouseholdId))
-                throw new InvalidOperationException($"Household with id {household.HouseholdId} already exists.");
 
-            household.Members ??= new List<Resident>();
-            households.Add(household);
-
-            // attach existing residents that reference this household id
-            foreach (var r in residents.Where(r => r.HouseholdId == household.HouseholdId))
-            {
-                if (!household.Members.Any(m => m.ResidentId == r.ResidentId))
-                    household.Members.Add(r);
-            }
+            _db.Households.Add(household);
+            _db.SaveChanges();
         }
 
         public List<Household> GetHouseholds()
         {
-            // ensure Members is never null and return a snapshot
-            return households.Select(h =>
-            {
-                h.Members ??= new List<Resident>();
-                return h;
-            }).ToList();
+            return _db.Households
+                .Include(h => h.Members)
+                .AsNoTracking()
+                .ToList();
         }
 
         public Household GetHouseholdById(int id)
         {
-            return households.FirstOrDefault(h => h.HouseholdId == id);
+            return _db.Households
+                .Include(h => h.Members)
+                .AsNoTracking()
+                .FirstOrDefault(h => h.HouseholdId == id);
         }
 
         // =========================
@@ -162,15 +136,18 @@ namespace BRRAPI.Services
         public void AddUser(User user)
         {
             if (user == null) throw new ArgumentNullException(nameof(user));
-            if (users.Any(u => u.UserId == user.UserId || string.Equals(u.Username, user.Username, StringComparison.OrdinalIgnoreCase)))
-                throw new InvalidOperationException("User already exists.");
 
-            users.Add(user);
+            // basic duplicate check
+            if (_db.Users.Any(u => u.Username == user.Username))
+                throw new InvalidOperationException("User with that username already exists.");
+
+            _db.Users.Add(user);
+            _db.SaveChanges();
         }
 
         public List<User> GetUsers()
         {
-            return users.ToList();
+            return _db.Users.AsNoTracking().ToList();
         }
     }
 }
