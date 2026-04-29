@@ -1,49 +1,58 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using BRRAPI.Models;
-using BRRAPI.Services;
+using BRRAPI.Data;
 
 namespace BRRAPI.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/auth")]
     public class AuthController : ControllerBase
     {
-        private readonly BarangayService _service;
+        private readonly AppDbContext _context;
 
-        public AuthController(BarangayService service)
+        public AuthController(AppDbContext context)
         {
-            _service = service ?? throw new ArgumentNullException(nameof(service));
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromBody] User credentials)
+        public async Task<IActionResult> Login([FromBody] User login)
         {
-            if (credentials == null || string.IsNullOrWhiteSpace(credentials.Username) || string.IsNullOrWhiteSpace(credentials.Password))
+            if (login == null || string.IsNullOrWhiteSpace(login.Username) || string.IsNullOrWhiteSpace(login.Password))
                 return BadRequest("Username and password are required.");
 
-            var user = _service.GetUsers()
-                .FirstOrDefault(u => u.Username == credentials.Username && u.Password == credentials.Password);
+            var user = await _context.Users
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.Username == login.Username && u.Password == login.Password);
 
             if (user == null)
-                return Unauthorized();
+                return Unauthorized("Invalid credentials");
 
-            return Ok(new { user.UserId, user.Username, user.Role });
+            return Ok(new
+            {
+                username = user.Username,
+                role = user.Role
+            });
         }
 
+        // Optional: simple register endpoint that persists user to DB
         [HttpPost("register")]
-        public IActionResult Register([FromBody] User user)
+        public async Task<IActionResult> Register([FromBody] User user)
         {
             if (user == null || string.IsNullOrWhiteSpace(user.Username) || string.IsNullOrWhiteSpace(user.Password))
                 return BadRequest("Username and password required.");
 
-            if (_service.GetUsers().Any(u => u.Username == user.Username))
+            if (await _context.Users.AnyAsync(u => u.Username == user.Username))
                 return Conflict("Username already exists.");
 
-            _service.AddUser(user);
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(Register), new { id = user.UserId }, new { user.UserId, user.Username });
+            return CreatedAtAction(null, new { id = user.UserId }, new { user.UserId, user.Username });
         }
     }
 }

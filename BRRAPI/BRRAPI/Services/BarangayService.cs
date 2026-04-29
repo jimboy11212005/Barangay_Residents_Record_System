@@ -16,10 +16,7 @@ namespace BRRAPI.Services
             _db = db ?? throw new ArgumentNullException(nameof(db));
         }
 
-        // =========================
-        // 👤 RESIDENT OPERATIONS
-        // =========================
-
+        // ========================= RESIDENT OPERATIONS =========================
         public void AddResident(Resident resident)
         {
             if (resident == null) throw new ArgumentNullException(nameof(resident));
@@ -33,12 +30,12 @@ namespace BRRAPI.Services
             if (updated == null) throw new ArgumentNullException(nameof(updated));
 
             var resident = _db.Residents.Find(updated.ResidentId);
-            if (resident == null) return;
+            if (resident == null) throw new InvalidOperationException("Resident not found");
 
             resident.FullName = updated.FullName;
             resident.BirthDate = updated.BirthDate;
-            resident.Address = updated.Address;
             resident.Gender = updated.Gender;
+            resident.Address = updated.Address;
             resident.IsPWD = updated.IsPWD;
             resident.MedicalCondition = updated.MedicalCondition;
             resident.Medication = updated.Medication;
@@ -58,33 +55,40 @@ namespace BRRAPI.Services
 
         public Resident GetResidentById(int id)
         {
-            return _db.Residents.AsNoTracking().FirstOrDefault(r => r.ResidentId == id);
+            return _db.Residents
+                .AsNoTracking()
+                .FirstOrDefault(r => r.ResidentId == id);
         }
 
         public List<Resident> GetResidents()
         {
-            return _db.Residents.AsNoTracking().ToList();
+            return _db.Residents
+                .AsNoTracking()
+                .OrderByDescending(r => r.ResidentId)
+                .ToList();
         }
 
-        // 🔍 SEARCH
         public List<Resident> SearchResident(string keyword)
         {
             if (string.IsNullOrWhiteSpace(keyword))
                 return new List<Resident>();
 
-            var lowered = keyword.Trim().ToLowerInvariant();
+            var pattern = $"%{keyword.Trim()}%";
+
             return _db.Residents
                 .AsNoTracking()
-                .Where(r => r.FullName != null && r.FullName.ToLower().Contains(lowered))
+                .Where(r =>
+                    (r.FullName != null && EF.Functions.Like(r.FullName, pattern)) ||
+                    (r.Address != null && EF.Functions.Like(r.Address, pattern)))
                 .ToList();
         }
 
-        // 📊 FILTER BY CATEGORY (in-memory because GetCategory uses logic)
         public List<Resident> GetByCategory(string category)
         {
             if (string.IsNullOrWhiteSpace(category))
                 return new List<Resident>();
 
+            // GetCategory is instance logic — materialize and filter in memory
             return _db.Residents
                 .AsNoTracking()
                 .AsEnumerable()
@@ -92,7 +96,6 @@ namespace BRRAPI.Services
                 .ToList();
         }
 
-        // ♿ PWD LIST
         public List<Resident> GetPWDResidents()
         {
             return _db.Residents
@@ -101,10 +104,7 @@ namespace BRRAPI.Services
                 .ToList();
         }
 
-        // =========================
-        // 🏠 HOUSEHOLD OPERATIONS
-        // =========================
-
+        // ========================= HOUSEHOLD OPERATIONS =========================
         public void AddHousehold(Household household)
         {
             if (household == null) throw new ArgumentNullException(nameof(household));
@@ -129,25 +129,11 @@ namespace BRRAPI.Services
                 .FirstOrDefault(h => h.HouseholdId == id);
         }
 
-        // =========================
-        // 👥 USER OPERATIONS
-        // =========================
-
-        public void AddUser(User user)
-        {
-            if (user == null) throw new ArgumentNullException(nameof(user));
-
-            // basic duplicate check
-            if (_db.Users.Any(u => u.Username == user.Username))
-                throw new InvalidOperationException("User with that username already exists.");
-
-            _db.Users.Add(user);
-            _db.SaveChanges();
-        }
-
-        public List<User> GetUsers()
-        {
-            return _db.Users.AsNoTracking().ToList();
-        }
+        // ========================= DASHBOARD STATS =========================
+        public int GetTotalResidents() => _db.Residents.Count();
+        public int GetChildrenCount() => GetResidents().Count(r => r.GetCategory() == "Child");
+        public int GetAdultCount() => GetResidents().Count(r => r.GetCategory() == "Adult");
+        public int GetSeniorCount() => GetResidents().Count(r => r.GetCategory() == "Senior");
+        public int GetPWDCount() => _db.Residents.Count(r => r.IsPWD);
     }
 }

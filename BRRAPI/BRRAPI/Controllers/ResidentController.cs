@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using BRRAPI.Models;
 using BRRAPI.Services;
@@ -12,7 +13,7 @@ namespace BRRAPI.Controllers
     {
         private readonly BarangayService _barangayService;
 
-        // Use DI for the service. Program.cs will register BarangayService.
+        // Use DI for the service. Program.cs should register BarangayService.
         public ResidentController(BarangayService barangayService)
         {
             _barangayService = barangayService ?? throw new ArgumentNullException(nameof(barangayService));
