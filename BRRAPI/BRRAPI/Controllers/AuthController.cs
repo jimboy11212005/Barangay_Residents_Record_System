@@ -1,58 +1,109 @@
-﻿using System;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using BRRAPI.Data;
+using BRRAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BRRAPI.Models;
-using BRRAPI.Data;
+using Microsoft.Extensions.Logging;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace BRRAPI.Controllers
 {
     [ApiController]
-    [Route("api/auth")]
+    [Route("api/auth")] // ✅ FIXED ROUTE
     public class AuthController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly ILogger<AuthController> _logger;
 
-        public AuthController(AppDbContext context)
+        public AuthController(AppDbContext context, ILogger<AuthController> logger)
         {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
+            _context = context;
+            _logger = logger;
+        }
+
+        // 🔐 HASH FUNCTION
+        private string HashPassword(string password)
+        {
+            using var sha256 = SHA256.Create();
+            var bytes = Encoding.UTF8.GetBytes(password);
+            var hash = sha256.ComputeHash(bytes);
+            return Convert.ToBase64String(hash);
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] User login)
+        public async Task<IActionResult> Login([FromBody] LoginRequest login)
         {
-            if (login == null || string.IsNullOrWhiteSpace(login.Username) || string.IsNullOrWhiteSpace(login.Password))
-                return BadRequest("Username and password are required.");
+            if (string.IsNullOrWhiteSpace(login.Username) || string.IsNullOrWhiteSpace(login.Password))
+                return BadRequest(new { message = "Username and password are required" });
+
+            var hashedPassword = HashPassword(login.Password);
 
             var user = await _context.Users
-                .AsNoTracking()
-                .FirstOrDefaultAsync(u => u.Username == login.Username && u.Password == login.Password);
+                .FirstOrDefaultAsync(u => u.Username.ToLower() == login.Username.ToLower()
+                                      && u.Password == hashedPassword);
 
             if (user == null)
-                return Unauthorized("Invalid credentials");
+                return Unauthorized(new { message = "Invalid credentials" });
 
             return Ok(new
             {
-                username = user.Username,
-                role = user.Role
+                token = Guid.NewGuid().ToString(),
+                user = new
+                {
+                    username = user.Username,
+                    role = user.Role
+                }
             });
         }
 
-        // Optional: simple register endpoint that persists user to DB
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] User user)
+        public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
-            if (user == null || string.IsNullOrWhiteSpace(user.Username) || string.IsNullOrWhiteSpace(user.Password))
-                return BadRequest("Username and password required.");
+            if (string.IsNullOrWhiteSpace(request.Username) ||
+                string.IsNullOrWhiteSpace(request.Password) ||
+                string.IsNullOrWhiteSpace(request.FullName))
+            {
+                return BadRequest(new { message = "All fields are required" });
+            }
 
-            if (await _context.Users.AnyAsync(u => u.Username == user.Username))
-                return Conflict("Username already exists.");
+            try
+            {
+                if (await _context.Users.AnyAsync(u => u.Username.ToLower() == request.Username.ToLower()))
+                {
+                    return BadRequest(new { message = "Username already exists" });
+                }
 
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+                var user = new User
+                {
+                    FullName = request.FullName,
+                    Username = request.Username,
+                    Password = HashPassword(request.Password), // 🔐 HASHED
+                    Role = "user"
+                };
 
-            return CreatedAtAction(null, new { id = user.UserId }, new { user.UserId, user.Username });
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { message = "Registered successfully" });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Registration error");
+                return StatusCode(500, new { message = "Server error" });
+            }
         }
+    }
+
+    public class LoginRequest
+    {
+        public string Username { get; set; } = "";
+        public string Password { get; set; } = "";
+    }
+
+    public class RegisterRequest
+    {
+        public string FullName { get; set; } = "";
+        public string Username { get; set; } = "";
+        public string Password { get; set; } = "";
     }
 }

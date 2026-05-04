@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿// Your existing DashboardController - KEEP AS IS
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using BRRAPI.Services;
 
