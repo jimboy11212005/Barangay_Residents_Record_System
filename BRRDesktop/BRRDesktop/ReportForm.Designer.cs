@@ -55,7 +55,7 @@
             // 
             this.guna2ShadowPanel3.BackColor = System.Drawing.Color.Transparent;
             this.guna2ShadowPanel3.Controls.Add(this.btnGenResident);
-            this.guna2ShadowPanel3.FillColor = System.Drawing.Color.RosyBrown;
+            this.guna2ShadowPanel3.FillColor = System.Drawing.Color.DarkSlateGray;
             this.guna2ShadowPanel3.ForeColor = System.Drawing.Color.RosyBrown;
             this.guna2ShadowPanel3.Location = new System.Drawing.Point(79, 44);
             this.guna2ShadowPanel3.Name = "guna2ShadowPanel3";
@@ -85,7 +85,7 @@
             // 
             this.guna2ShadowPanel1.BackColor = System.Drawing.Color.Transparent;
             this.guna2ShadowPanel1.Controls.Add(this.btnGenHousehold);
-            this.guna2ShadowPanel1.FillColor = System.Drawing.Color.RosyBrown;
+            this.guna2ShadowPanel1.FillColor = System.Drawing.Color.DarkSlateGray;
             this.guna2ShadowPanel1.ForeColor = System.Drawing.Color.RosyBrown;
             this.guna2ShadowPanel1.Location = new System.Drawing.Point(79, 105);
             this.guna2ShadowPanel1.Name = "guna2ShadowPanel1";
@@ -115,7 +115,7 @@
             // 
             this.guna2ShadowPanel2.BackColor = System.Drawing.Color.Transparent;
             this.guna2ShadowPanel2.Controls.Add(this.dgvResults);
-            this.guna2ShadowPanel2.FillColor = System.Drawing.Color.Black;
+            this.guna2ShadowPanel2.FillColor = System.Drawing.Color.DarkSlateGray;
             this.guna2ShadowPanel2.Location = new System.Drawing.Point(493, 35);
             this.guna2ShadowPanel2.Name = "guna2ShadowPanel2";
             this.guna2ShadowPanel2.Radius = 10;

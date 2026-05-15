@@ -42,8 +42,8 @@
             this.btnDelete = new Guna.UI2.WinForms.Guna2ImageButton();
             this.guna2ShadowPanel4 = new Guna.UI2.WinForms.Guna2ShadowPanel();
             this.dgvResidents = new Guna.UI2.WinForms.Guna2DataGridView();
-            this.txtSearch = new Guna.UI2.WinForms.Guna2TextBox();
             this.btnSearch = new Guna.UI2.WinForms.Guna2CircleButton();
+            this.txtSearch = new Guna.UI2.WinForms.Guna2TextBox();
             this.guna2Panel1 = new Guna.UI2.WinForms.Guna2Panel();
             this.guna2ShadowPanel3.SuspendLayout();
             this.guna2ShadowPanel1.SuspendLayout();
@@ -63,7 +63,7 @@
             this.guna2ShadowPanel3.Controls.Add(this.btnAdd);
             this.guna2ShadowPanel3.FillColor = System.Drawing.Color.RosyBrown;
             this.guna2ShadowPanel3.ForeColor = System.Drawing.Color.RosyBrown;
-            this.guna2ShadowPanel3.Location = new System.Drawing.Point(31, 232);
+            this.guna2ShadowPanel3.Location = new System.Drawing.Point(59, 232);
             this.guna2ShadowPanel3.Name = "guna2ShadowPanel3";
             this.guna2ShadowPanel3.Radius = 10;
             this.guna2ShadowPanel3.ShadowColor = System.Drawing.Color.Black;
@@ -90,7 +90,7 @@
             this.guna2ShadowPanel1.Controls.Add(this.btnUpdate);
             this.guna2ShadowPanel1.FillColor = System.Drawing.Color.RosyBrown;
             this.guna2ShadowPanel1.ForeColor = System.Drawing.Color.RosyBrown;
-            this.guna2ShadowPanel1.Location = new System.Drawing.Point(162, 232);
+            this.guna2ShadowPanel1.Location = new System.Drawing.Point(190, 232);
             this.guna2ShadowPanel1.Name = "guna2ShadowPanel1";
             this.guna2ShadowPanel1.Radius = 10;
             this.guna2ShadowPanel1.ShadowColor = System.Drawing.Color.Black;
@@ -117,7 +117,7 @@
             this.guna2ShadowPanel2.Controls.Add(this.btnDelete);
             this.guna2ShadowPanel2.FillColor = System.Drawing.Color.RosyBrown;
             this.guna2ShadowPanel2.ForeColor = System.Drawing.Color.RosyBrown;
-            this.guna2ShadowPanel2.Location = new System.Drawing.Point(293, 232);
+            this.guna2ShadowPanel2.Location = new System.Drawing.Point(321, 232);
             this.guna2ShadowPanel2.Name = "guna2ShadowPanel2";
             this.guna2ShadowPanel2.Radius = 10;
             this.guna2ShadowPanel2.ShadowColor = System.Drawing.Color.Black;
@@ -147,7 +147,7 @@
             this.guna2ShadowPanel4.Controls.Add(this.txtSearch);
             this.guna2ShadowPanel4.Controls.Add(this.guna2ShadowPanel3);
             this.guna2ShadowPanel4.Controls.Add(this.guna2ShadowPanel1);
-            this.guna2ShadowPanel4.FillColor = System.Drawing.Color.Salmon;
+            this.guna2ShadowPanel4.FillColor = System.Drawing.Color.DarkSeaGreen;
             this.guna2ShadowPanel4.ForeColor = System.Drawing.SystemColors.ActiveCaptionText;
             this.guna2ShadowPanel4.Location = new System.Drawing.Point(12, 79);
             this.guna2ShadowPanel4.Name = "guna2ShadowPanel4";
@@ -206,27 +206,6 @@
             this.dgvResidents.ThemeStyle.RowsStyle.SelectionBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(229)))), ((int)(((byte)(255)))));
             this.dgvResidents.ThemeStyle.RowsStyle.SelectionForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(71)))), ((int)(((byte)(69)))), ((int)(((byte)(94)))));
             // 
-            // txtSearch
-            // 
-            this.txtSearch.AutoRoundedCorners = true;
-            this.txtSearch.BackColor = System.Drawing.Color.Transparent;
-            this.txtSearch.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.txtSearch.DefaultText = "";
-            this.txtSearch.DisabledState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(208)))), ((int)(((byte)(208)))), ((int)(((byte)(208)))));
-            this.txtSearch.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(226)))), ((int)(((byte)(226)))));
-            this.txtSearch.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(138)))), ((int)(((byte)(138)))));
-            this.txtSearch.DisabledState.PlaceholderForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(138)))), ((int)(((byte)(138)))));
-            this.txtSearch.FillColor = System.Drawing.Color.IndianRed;
-            this.txtSearch.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
-            this.txtSearch.Font = new System.Drawing.Font("Segoe UI", 9F);
-            this.txtSearch.HoverState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
-            this.txtSearch.Location = new System.Drawing.Point(170, 10);
-            this.txtSearch.Name = "txtSearch";
-            this.txtSearch.PlaceholderText = "";
-            this.txtSearch.SelectedText = "";
-            this.txtSearch.Size = new System.Drawing.Size(276, 39);
-            this.txtSearch.TabIndex = 8;
-            // 
             // btnSearch
             // 
             this.btnSearch.BackColor = System.Drawing.Color.Transparent;
@@ -245,6 +224,27 @@
             this.btnSearch.ShadowDecoration.Mode = Guna.UI2.WinForms.Enums.ShadowMode.Circle;
             this.btnSearch.Size = new System.Drawing.Size(38, 39);
             this.btnSearch.TabIndex = 9;
+            // 
+            // txtSearch
+            // 
+            this.txtSearch.AutoRoundedCorners = true;
+            this.txtSearch.BackColor = System.Drawing.Color.Transparent;
+            this.txtSearch.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.txtSearch.DefaultText = "";
+            this.txtSearch.DisabledState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(208)))), ((int)(((byte)(208)))), ((int)(((byte)(208)))));
+            this.txtSearch.DisabledState.FillColor = System.Drawing.Color.FromArgb(((int)(((byte)(226)))), ((int)(((byte)(226)))), ((int)(((byte)(226)))));
+            this.txtSearch.DisabledState.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(138)))), ((int)(((byte)(138)))));
+            this.txtSearch.DisabledState.PlaceholderForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(138)))), ((int)(((byte)(138)))), ((int)(((byte)(138)))));
+            this.txtSearch.FillColor = System.Drawing.Color.DarkSlateGray;
+            this.txtSearch.FocusedState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
+            this.txtSearch.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.txtSearch.HoverState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
+            this.txtSearch.Location = new System.Drawing.Point(170, 10);
+            this.txtSearch.Name = "txtSearch";
+            this.txtSearch.PlaceholderText = "";
+            this.txtSearch.SelectedText = "";
+            this.txtSearch.Size = new System.Drawing.Size(276, 39);
+            this.txtSearch.TabIndex = 8;
             // 
             // guna2Panel1
             // 

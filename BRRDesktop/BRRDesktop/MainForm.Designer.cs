@@ -56,7 +56,7 @@
             // 
             // panelHeader
             // 
-            this.panelHeader.BackColor = System.Drawing.Color.RosyBrown;
+            this.panelHeader.BackColor = System.Drawing.Color.DarkSlateGray;
             this.panelHeader.Controls.Add(this.btnLogout);
             this.panelHeader.Controls.Add(this.lblAdminName);
             this.panelHeader.Controls.Add(this.guna2HtmlLabel1);
@@ -87,7 +87,8 @@
             // 
             this.lblAdminName.BackColor = System.Drawing.Color.Transparent;
             this.lblAdminName.Font = new System.Drawing.Font("MV Boli", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblAdminName.Location = new System.Drawing.Point(564, 67);
+            this.lblAdminName.ForeColor = System.Drawing.SystemColors.ControlLight;
+            this.lblAdminName.Location = new System.Drawing.Point(649, 50);
             this.lblAdminName.Name = "lblAdminName";
             this.lblAdminName.Size = new System.Drawing.Size(79, 18);
             this.lblAdminName.TabIndex = 1;
@@ -97,6 +98,7 @@
             // 
             this.guna2HtmlLabel1.BackColor = System.Drawing.Color.Transparent;
             this.guna2HtmlLabel1.Font = new System.Drawing.Font("Modern No. 20", 36F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.guna2HtmlLabel1.ForeColor = System.Drawing.SystemColors.ControlLightLight;
             this.guna2HtmlLabel1.Location = new System.Drawing.Point(82, 24);
             this.guna2HtmlLabel1.Name = "guna2HtmlLabel1";
             this.guna2HtmlLabel1.Size = new System.Drawing.Size(561, 52);
@@ -109,13 +111,14 @@
             this.panelMain.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("panelMain.BackgroundImage")));
             this.panelMain.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.panelMain.FillColor = System.Drawing.Color.Transparent;
-            this.panelMain.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.panelMain.ForeColor = System.Drawing.Color.Transparent;
             this.panelMain.Location = new System.Drawing.Point(128, -17);
             this.panelMain.Name = "panelMain";
             this.panelMain.Radius = 50;
-            this.panelMain.ShadowColor = System.Drawing.Color.Black;
+            this.panelMain.ShadowColor = System.Drawing.Color.Transparent;
             this.panelMain.Size = new System.Drawing.Size(838, 482);
             this.panelMain.TabIndex = 2;
+            this.panelMain.Paint += new System.Windows.Forms.PaintEventHandler(this.panelMain_Paint);
             // 
             // guna2CustomGradientPanel1
             // 
@@ -135,7 +138,7 @@
             // 
             // panelSidebar
             // 
-            this.panelSidebar.BackColor = System.Drawing.Color.RosyBrown;
+            this.panelSidebar.BackColor = System.Drawing.Color.DarkSlateGray;
             this.panelSidebar.Controls.Add(this.guna2ShadowPanel2);
             this.panelSidebar.Dock = System.Windows.Forms.DockStyle.Left;
             this.panelSidebar.Location = new System.Drawing.Point(0, 0);

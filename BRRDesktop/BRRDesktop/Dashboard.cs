@@ -1,5 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using BRRDesktop.Models;
+using BRRDesktop.Services;
+using BRRDesktop.Helpers;
+using Newtonsoft.Json;
 
 namespace BRRDesktop
 {
@@ -8,24 +14,30 @@ namespace BRRDesktop
         public Dashboard()
         {
             InitializeComponent();
-            LoadStats();
+           
         }
 
-        private async void LoadStats()
+
+        private void Dashboard_Load(object sender, EventArgs e)
         {
-            try
-            {
-                // Use designer-created labels (from Dashboard.Designer.cs)
-                lblTotalResidents.Text = (await ApiHelper.Get<int>("dashboard/total-residents")).ToString();
-                lblChildren.Text = (await ApiHelper.Get<int>("dashboard/children-count")).ToString();
-                lblAdults.Text = (await ApiHelper.Get<int>("dashboard/adult-count")).ToString();
-                lblSeniors.Text = (await ApiHelper.Get<int>("dashboard/senior-count")).ToString();
-                lblPWD.Text = (await ApiHelper.Get<int>("dashboard/pwd-count")).ToString();
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Dashboard load failed: {ex.Message}");
-            }
+            lblUsername.Text = SessionManager.Username;
+
+            await LoadResidents();
+        }
+
+        private async Task LoadResidents()
+        {
+            var response = await ApiService.GetData("residents");
+
+            var residents = JsonConvert.DeserializeObject<List<Resident>>(response);
+
+            dgvResidents.DataSource = residents;
+
+            lblTotalResidents.Text = residents.Count.ToString();
+
+            lblMale.Text = residents.Count(x => x.Gender == "Male").ToString();
+
+            lblFemale.Text = residents.Count(x => x.Gender == "Female").ToString();
         }
     }
 }

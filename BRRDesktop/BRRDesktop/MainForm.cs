@@ -63,5 +63,10 @@ namespace BarangayAdminDesktop
         {
 
         }
+
+        private void panelMain_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
     }
 }

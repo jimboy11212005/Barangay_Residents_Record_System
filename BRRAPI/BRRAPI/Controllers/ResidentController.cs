@@ -1,158 +1,82 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.AspNetCore.Mvc;
+﻿using BRRAPI.Data;
 using BRRAPI.Models;
-using BRRAPI.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace BRRAPI.Controllers
 {
-    [ApiController]
     [Route("api/[controller]")]
-    public class ResidentController : ControllerBase
+    [ApiController]
+    [Authorize]
+    public class ResidentsController : ControllerBase
     {
-        private readonly BarangayService _barangayService;
+        private readonly AppDbContext _context;
 
-        // Use DI for the service. Program.cs should register BarangayService.
-        public ResidentController(BarangayService barangayService)
+        public ResidentsController(AppDbContext context)
         {
-            _barangayService = barangayService ?? throw new ArgumentNullException(nameof(barangayService));
+            _context = context;
         }
 
-        [HttpPost("add")]
-        public IActionResult AddResident([FromBody] Resident resident)
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Resident>>> GetResidents()
         {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            if (resident == null)
-                return BadRequest("Resident cannot be null.");
-
-            try
-            {
-                _barangayService.AddResident(resident);
-                return CreatedAtAction(nameof(GetResidentById), new { id = resident.ResidentId }, resident);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred while adding the resident: {ex.Message}");
-            }
-        }
-
-        [HttpPut("update/{id}")]
-        public IActionResult UpdateResident(int id, [FromBody] Resident resident)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(ModelState);
-
-            if (resident == null)
-                return BadRequest("Resident cannot be null.");
-
-            if (id != resident.ResidentId)
-                return BadRequest("Resident ID mismatch.");
-
-            try
-            {
-                _barangayService.UpdateResident(resident);
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred while updating the resident: {ex.Message}");
-            }
-        }
-
-        [HttpDelete("delete/{residentId}")]
-        public IActionResult DeleteResident(int residentId)
-        {
-            try
-            {
-                _barangayService.DeleteResident(residentId);
-                return NoContent();
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred while deleting the resident: {ex.Message}");
-            }
-        }
-
-        [HttpGet("all")]
-        public ActionResult<List<Resident>> GetAllResidents()
-        {
-            try
-            {
-                var residents = _barangayService.GetResidents();
-                return Ok(residents);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred while retrieving residents: {ex.Message}");
-            }
-        }
-
-        [HttpGet("search")]
-        public ActionResult<List<Resident>> SearchResident([FromQuery] string keyword)
-        {
-            if (string.IsNullOrWhiteSpace(keyword))
-                return BadRequest("Keyword is required.");
-
-            try
-            {
-                var residents = _barangayService.SearchResident(keyword);
-                return Ok(residents);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred while searching residents: {ex.Message}");
-            }
-        }
-
-        [HttpGet("filter")]
-        public ActionResult<List<Resident>> FilterByCategory([FromQuery] string category)
-        {
-            if (string.IsNullOrWhiteSpace(category))
-                return BadRequest("Category is required.");
-
-            try
-            {
-                var residents = _barangayService.GetByCategory(category);
-                return Ok(residents);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred while filtering residents: {ex.Message}");
-            }
-        }
-
-        [HttpGet("pwd")]
-        public ActionResult<List<Resident>> GetPWDResidents()
-        {
-            try
-            {
-                var residents = _barangayService.GetPWDResidents();
-                return Ok(residents);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"An error occurred while retrieving PWD residents: {ex.Message}");
-            }
+            return await _context.Residents.ToListAsync();
         }
 
         [HttpGet("{id}")]
-        public ActionResult<Resident> GetResidentById(int id)
+        public async Task<ActionResult<Resident>> GetResident(int id)
         {
-            try
-            {
-                var resident = _barangayService.GetResidentById(id);
-                if (resident == null)
-                    return NotFound($"Resident with ID {id} not found.");
+            var resident = await _context.Residents.FindAsync(id);
 
-                return Ok(resident);
-            }
-            catch (Exception ex)
+            if (resident == null)
             {
-                return StatusCode(500, $"An error occurred while retrieving resident: {ex.Message}");
+                return NotFound();
             }
+
+            return resident;
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<Resident>> AddResident(Resident resident)
+        {
+            _context.Residents.Add(resident);
+
+            await _context.SaveChangesAsync();
+
+            return Ok(resident);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateResident(int id, Resident resident)
+        {
+            if (id != resident.ResidentId)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(resident).State = EntityState.Modified;
+
+            await _context.SaveChangesAsync();
+
+            return Ok("Updated Successfully");
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteResident(int id)
+        {
+            var resident = await _context.Residents.FindAsync(id);
+
+            if (resident == null)
+            {
+                return NotFound();
+            }
+
+            _context.Residents.Remove(resident);
+
+            await _context.SaveChangesAsync();
+
+            return Ok("Deleted Successfully");
         }
     }
 }

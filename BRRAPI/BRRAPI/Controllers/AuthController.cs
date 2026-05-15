@@ -1,109 +1,74 @@
 ﻿using BRRAPI.Data;
+using BRRAPI.DTOs;
 using BRRAPI.Models;
+using BRRAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace BRRAPI.Controllers
 {
+    [Route("api/[controller]")]
     [ApiController]
-    [Route("api/auth")] // ✅ FIXED ROUTE
     public class AuthController : ControllerBase
     {
         private readonly AppDbContext _context;
-        private readonly ILogger<AuthController> _logger;
+        private readonly JwtService _jwtService;
 
-        public AuthController(AppDbContext context, ILogger<AuthController> logger)
+        public AuthController(AppDbContext context, JwtService jwtService)
         {
             _context = context;
-            _logger = logger;
-        }
-
-        // 🔐 HASH FUNCTION
-        private string HashPassword(string password)
-        {
-            using var sha256 = SHA256.Create();
-            var bytes = Encoding.UTF8.GetBytes(password);
-            var hash = sha256.ComputeHash(bytes);
-            return Convert.ToBase64String(hash);
-        }
-
-        [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginRequest login)
-        {
-            if (string.IsNullOrWhiteSpace(login.Username) || string.IsNullOrWhiteSpace(login.Password))
-                return BadRequest(new { message = "Username and password are required" });
-
-            var hashedPassword = HashPassword(login.Password);
-
-            var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Username.ToLower() == login.Username.ToLower()
-                                      && u.Password == hashedPassword);
-
-            if (user == null)
-                return Unauthorized(new { message = "Invalid credentials" });
-
-            return Ok(new
-            {
-                token = Guid.NewGuid().ToString(),
-                user = new
-                {
-                    username = user.Username,
-                    role = user.Role
-                }
-            });
+            _jwtService = jwtService;
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterRequest request)
+        public async Task<IActionResult> Register(RegisterDTO dto)
         {
-            if (string.IsNullOrWhiteSpace(request.Username) ||
-                string.IsNullOrWhiteSpace(request.Password) ||
-                string.IsNullOrWhiteSpace(request.FullName))
+            if (await _context.Users.AnyAsync(x => x.Username == dto.Username))
             {
-                return BadRequest(new { message = "All fields are required" });
+                return BadRequest("Username already exists");
             }
 
-            try
+            User user = new User()
             {
-                if (await _context.Users.AnyAsync(u => u.Username.ToLower() == request.Username.ToLower()))
-                {
-                    return BadRequest(new { message = "Username already exists" });
-                }
+                FullName = dto.FullName,
+                Username = dto.Username,
+                Email = dto.Email,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+                RoleName = "Admin"
+            };
 
-                var user = new User
-                {
-                    FullName = request.FullName,
-                    Username = request.Username,
-                    Password = HashPassword(request.Password), // 🔐 HASHED
-                    Role = "user"
-                };
+            _context.Users.Add(user);
+            await _context.SaveChangesAsync();
 
-                _context.Users.Add(user);
-                await _context.SaveChangesAsync();
-
-                return Ok(new { message = "Registered successfully" });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Registration error");
-                return StatusCode(500, new { message = "Server error" });
-            }
+            return Ok("Registered Successfully");
         }
-    }
 
-    public class LoginRequest
-    {
-        public string Username { get; set; } = "";
-        public string Password { get; set; } = "";
-    }
+        [HttpPost("login")]
+        public async Task<IActionResult> Login(LoginDTO dto)
+        {
+            var user = await _context.Users
+                .FirstOrDefaultAsync(x => x.Username == dto.Username);
 
-    public class RegisterRequest
-    {
-        public string FullName { get; set; } = "";
-        public string Username { get; set; } = "";
-        public string Password { get; set; } = "";
+            if (user == null)
+            {
+                return Unauthorized("Invalid Username");
+            }
+
+            bool verify = BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash);
+
+            if (!verify)
+            {
+                return Unauthorized("Invalid Password");
+            }
+
+            var token = _jwtService.GenerateToken(user.Username, user.RoleName);
+
+            return Ok(new
+            {
+                token = token,
+                username = user.Username,
+                role = user.RoleName
+            });
+        }
     }
 }
