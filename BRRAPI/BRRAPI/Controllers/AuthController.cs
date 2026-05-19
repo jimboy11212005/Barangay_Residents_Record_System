@@ -33,8 +33,8 @@ namespace BRRAPI.Controllers
                 FullName = dto.FullName,
                 Username = dto.Username,
                 Email = dto.Email,
-                PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-                RoleName = "Admin"
+                Password = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+                RoleName = "User"
             };
 
             _context.Users.Add(user);
@@ -54,7 +54,7 @@ namespace BRRAPI.Controllers
                 return Unauthorized("Invalid Username");
             }
 
-            bool verify = BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash);
+            bool verify = BCrypt.Net.BCrypt.Verify(dto.Password, user.Password);
 
             if (!verify)
             {

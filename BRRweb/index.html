@@ -3,126 +3,296 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Barangay Resident System - Login</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="style.css" rel="stylesheet">
-</head>
-<body class="bg-gradient">
-    <div class="container">
-        <div class="login-container">
-            <div class="card login-card animate__animated animate__fadeIn">
-                <div class="card-body p-5">
-                    <div class="text-center mb-4">
-                        <i class="fas fa-home fa-4x text-primary mb-3"></i>
-                        <h2>Barangay Resident System</h2>
-                        <p class="text-muted">Please sign in to continue</p>
-                    </div>
-                    
-                    <form id="loginForm">
-                        <div class="mb-4">
-                            <label class="form-label fw-bold">Username</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-user"></i></span>
-                                <input type="text" class="form-control" id="username" placeholder="admin / staff" required>
-                            </div>
-                        </div>
-                        <div class="mb-4">
-                            <label class="form-label fw-bold">Password</label>
-                            <div class="input-group">
-                                <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                                <input type="password" class="form-control" id="password" placeholder="Enter password" required>
-                            </div>
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold">
-                            <i class="fas fa-sign-in-alt me-2"></i>Login
-                        </button>
-                    </form>
 
-                    <div id="message" class="mt-3"></div>
-                    
-                    <div class="mt-4 text-center">
-                        <small class="text-muted">
-                            Test Accounts:<br>
-                            <strong>admin / admin123</strong> | <strong>staff / staff123</strong>
-                        </small>
+    <title>BRR Web System</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm fixed-top custom-nav">
+        <div class="container">
+
+            <a class="navbar-brand fw-bold" href="#">
+                🏠 BRR SYSTEM
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#home">Home</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#residents">Residents</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#register">Register</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#about">About</a>
+                    </li>
+
+                    <!-- LOGOUT BUTTON -->
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="#logout">Logout</a>
+                    </li>
+                </ul>
+            </div>
+
+            </div>
+    </nav>
+
+    <!-- HERO -->
+
+    <section class="hero-section" id="home">
+
+    <div class="hero-overlay"></div>
+
+    <div class="container position-relative z-1">
+
+        <div class="row align-items-center min-vh-100">
+
+            <div class="col-lg-6 text-white">
+
+                <span class="hero-badge">
+                    Modern Barangay Management System
+                </span>
+
+                <h1 class="hero-title mt-4">
+                    Smarter Barangay Services for Every Resident.
+                </h1>
+
+                <p class="hero-subtitle mt-4">
+                    A modern residents records platform that helps barangays manage residents, registrations, and community information efficiently and securely.
+                </p>
+
+                <div class="mt-5 d-flex gap-3 flex-wrap">
+
+                    <button class="btn btn-light btn-lg rounded-pill px-5 fw-bold shadow-sm">
+                        Get Started
+                    </button>
+
+                    <button class="btn btn-outline-light btn-lg rounded-pill px-5 fw-bold">
+                        Learn More
+                    </button>
+
+                </div>
+
+                 <div class="hero-stats mt-5">
+
+                    <div>
+                        <h2>100%</h2>
+                        <p>Secure Data</p>
+                    </div>
+
+                    <div>
+                        <h2>24/7</h2>
+                        <p>Access</p>
+                    </div>
+
+                    <div>
+                        <h2>Fast</h2>
+                        <p>Registration</p>
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="col-lg-6 text-center mt-5 mt-lg-0">
+
+                <div class="hero-card shadow-lg">
+
+                    <img
+                        src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+                        class="img-fluid hero-image"
+                    >
+
+                    <div class="floating-card card-1 shadow">
+                        👨‍👩‍👧 Resident Records
+                    </div>
+
+                    <div class="floating-card card-2 shadow">
+                        📋 Online Registration
+                    </div>
+
+                    <div class="floating-card card-3 shadow">
+                        📊 Smart Analytics
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- STATS -->
+
+    <section class="container mt-5">
+        <div class="row g-4">
+
+            <div class="col-md-3">
+                <div class="card stat-card shadow border-0">
+                    <div class="card-body">
+                        <h5>Total Residents</h5>
+                        <h1 id="totalResidents">0</h1>
                     </div>
                 </div>
             </div>
+
+            <div class="col-md-3">
+                <div class="card stat-card shadow border-0 green-card">
+                    <div class="card-body">
+                        <h5>Children</h5>
+                        <h1 id="childrenCount">0</h1>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="card stat-card shadow border-0 orange-card">
+                    <div class="card-body">
+                        <h5>Adults</h5>
+                        <h1 id="adultsCount">0</h1>
+                    </div>
+                </div>
+            </div>
+
+             <div class="col-md-3">
+                <div class="card stat-card shadow border-0 purple-card">
+                    <div class="card-body">
+                        <h5>PWD</h5>
+                        <h1 id="pwdCount">0</h1>
+                    </div>
+                </div>
+            </div>
+
         </div>
-    </div>
+    </section>
 
-    <script src="script.js"></script>
-    <script>
-        // ✅ FIXED LOGIN - Works with your API
-        document.getElementById("loginForm").addEventListener("submit", async (e) => {
-            e.preventDefault();
-            await loginUser();
-        });
+    <!-- RESIDENTS -->
 
-        async function loginUser() {
-            const username = document.getElementById("username").value;
-            const password = document.getElementById("password").value;
-            const messageDiv = document.getElementById("message");
+    <section class="container mt-5" id="residents">
 
-            try {
-                messageDiv.innerHTML = `
-                    <div class="alert alert-info d-flex align-items-center">
-                        <div class="spinner-border spinner-border-sm me-2" role="status"></div>
-                        Logging in...
-                    </div>`;
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold">Residents List</h2>
 
-                // ✅ TRY BOTH HTTP AND HTTPS
-                const apiUrls = [
-                    "http://localhost:7283/api/auth/login",
-                    "https://localhost:7283/api/auth/login"
-                ];
+            <input type="text" class="form-control search-box" id="searchBox" placeholder="Search Resident...">
+        </div>
 
-                let response;
-                for (const url of apiUrls) {
-                    try {
-                        console.log(`Trying: ${url}`);
-                        response = await fetch(url, {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ username, password })
-                        });
-                        if (response.ok) break;
-                    } catch (e) {
-                        console.log(`Failed ${url}:`, e.message);
-                        continue;
-                    }
-                }
+        <div class="table-responsive shadow rounded-4 overflow-hidden">
+            <table class="table table-hover align-middle mb-0">
 
-                if (!response?.ok) {
-                    const data = await response.json();
-                    throw new Error(data.message || `HTTP ${response.status}: ${response.statusText}`);
-                }
+                <thead class="table-dark">
+                    <tr>
+                        <th>ID</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Gender</th>
+                        <th>Age</th>
+                        <th>Purok</th>
+                        <th>PWD</th>
+                    </tr>
+                </thead>
 
-                const data = await response.json();
-                
-                // ✅ Store token and user
-                localStorage.setItem("token", data.token || "temp-token");
-                localStorage.setItem("user", JSON.stringify(data.user || { username }));
+                <tbody id="residentTable">
 
-                messageDiv.innerHTML = `
-                    <div class="alert alert-success d-flex align-items-center">
-                        <i class="fas fa-check-circle me-2"></i>
-                        Login successful! Redirecting...
-                    </div>`;
+                </tbody>
+            </table>
+        </div>
+    </section>
 
-                setTimeout(() => window.location.href = "dashboard.html", 1500);
+    <!-- REGISTER -->
 
-            } catch (error) {
-                console.error("Login Error:", error);
-                messageDiv.innerHTML = `
-                    <div class="alert alert-danger">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        ${error.message}
-                        <br><small>Make sure API is running on port 7283</small>
-                    </div>`;
-            }
-        }
-    </script>
+    <section class="container mt-5 mb-5" id="register">
+
+        <div class="card border-0 shadow-lg rounded-4 register-card">
+            <div class="card-body p-5">
+
+                <h2 class="fw-bold mb-4">
+                    Online Resident Registration
+                </h2>
+
+                <div class="row g-4">
+
+                    <div class="col-md-6">
+                        <input type="text" id="firstName" class="form-control form-control-lg" placeholder="First Name">
+                    </div>
+
+                    <div class="col-md-6">
+                        <input type="text" id="lastName" class="form-control form-control-lg" placeholder="Last Name">
+                    </div>
+
+                    <div class="col-md-4">
+                        <input type="number" id="age" class="form-control form-control-lg" placeholder="Age">
+                    </div>
+
+                    <div class="col-md-4">
+                        <select id="gender" class="form-select form-select-lg">
+                            <option value="">Select Gender</option>
+                            <option>Male</option>
+                            <option>Female</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <select id="purok" class="form-select form-select-lg">
+                            <option value="">Select Purok</option>
+                            <option>Purok 1</option>
+                            <option>Purok 2</option>
+                            <option>Purok 3</option>
+                            <option>Purok 4</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-12">
+                        <textarea id="address" class="form-control form-control-lg" rows="4" placeholder="Address"></textarea>
+                    </div>
+
+                    <div class="col-md-6">
+                        <select id="pwdStatus" class="form-select form-select-lg">
+                            <option value="">PWD Status</option>
+                            <option>Yes</option>
+                            <option>No</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-12">
+                        <button class="btn btn-primary btn-lg px-5 rounded-pill" onclick="addResident()">
+                            Register Resident
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+
+    <footer class="footer-section text-center py-4">
+        <p class="mb-0">
+            © 2026 Barangay Residents Records System
+        </p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+    <script src="js/app.js"></script>
+
 </body>
 </html>

@@ -1,0 +1,160 @@
+body {
+    background: #f1f5f9;
+    font-family: 'Segoe UI';
+}
+
+.custom-nav {
+    background: #0f172a;
+}
+
+.hero-section {
+    min-height: 100vh;
+    position: relative;
+    overflow: hidden;
+    background:
+        linear-gradient(
+            135deg,
+            rgba(37,99,235,0.95),
+            rgba(59,130,246,0.9)
+        ),
+        url('https://images.unsplash.com/photo-1529156069898-49953e39b3ac?q=80&w=1920&auto=format&fit=crop');
+
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(15,23,42,0.35);
+}
+
+.hero-badge {
+    background: rgba(255,255,255,0.15);
+    padding: 12px 22px;
+    border-radius: 999px;
+    backdrop-filter: blur(10px);
+    font-size: 14px;
+    font-weight: 600;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+
+.hero-title {
+    font-size: 68px;
+    font-weight: 800;
+    line-height: 1.1;
+}
+
+.hero-subtitle {
+    font-size: 20px;
+    max-width: 620px;
+    color: rgba(255,255,255,0.9);
+    line-height: 1.8;
+}
+
+.hero-card {
+    position: relative;
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 40px;
+    padding: 50px;
+    backdrop-filter: blur(18px);
+}
+
+.hero-image {
+    width: 350px;
+}
+
+.hero-stats {
+    display: flex;
+    gap: 50px;
+    flex-wrap: wrap;
+}
+
+.hero-stats h2 {
+    font-size: 40px;
+    font-weight: 800;
+    margin-bottom: 0;
+}
+
+.hero-stats p {
+    opacity: 0.9;
+}
+
+.floating-card {
+    position: absolute;
+    background: white;
+    color: #0f172a;
+    padding: 14px 22px;
+    border-radius: 16px;
+    font-weight: 600;
+}
+
+.card-1 {
+    top: 30px;
+    left: -20px;
+}
+
+.card-2 {
+    bottom: 40px;
+    right: -10px;
+}
+
+.card-3 {
+    top: 50%;
+    right: -40px;
+}
+
+@media (max-width: 992px) {
+
+    .hero-title {
+        font-size: 48px;
+    }
+
+    .hero-image {
+        width: 250px;
+    }
+
+    .floating-card {
+        display: none;
+    }
+}
+
+.stat-card {
+    border-radius: 25px;
+    background: #2563eb;
+    color: white;
+}
+
+.green-card {
+    background: #10b981;
+}
+
+.orange-card {
+    background: #f97316;
+}
+
+.purple-card {
+    background: #a855f7;
+}
+
+.stat-card h1 {
+    font-size: 55px;
+    font-weight: bold;
+}
+
+.search-box {
+    width: 280px;
+    border-radius: 30px;
+}
+
+.register-card {
+    border-radius: 30px;
+}
+
+.footer-section {
+    background: #0f172a;
+    color: white;
+}

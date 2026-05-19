@@ -1,4 +1,6 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Windows.Forms;
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,29 +11,85 @@ namespace BRRDesktop.Services
 {
     public static class ApiService
     {
-        public static string BaseUrl = "https://localhost:7001/api/";
+        public static string BaseUrl =
+            "https://localhost:7283/api/";
 
-        public static HttpClient client = new HttpClient();
+        public static HttpClient client =
+            new HttpClient();
 
-        public static async Task<string> PostData(string endpoint, object data)
+        // =========================
+        // GET
+        // =========================
+
+        public static async Task<string>
+            GetData(string endpoint)
         {
-            var json = JsonConvert.SerializeObject(data);
+            try
+            {
+                client.DefaultRequestHeaders.Authorization =
+                    new AuthenticationHeaderValue(
+                        "Bearer",
+                        SessionManager.Token
+                    );
 
-            var content = new StringContent(json, Encoding.UTF8, "application/json");
+                HttpResponseMessage response =
+                    await client.GetAsync(
+                        BaseUrl + endpoint
+                    );
 
-            var response = await client.PostAsync(BaseUrl + endpoint, content);
+                response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadAsStringAsync();
+                return await response.Content
+                    .ReadAsStringAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    ex.Message
+                );
+
+                return "";
+            }
         }
 
-        public static async Task<string> GetData(string endpoint)
+        // =========================
+        // POST
+        // =========================
+
+        public static async Task<string>
+            PostData(string endpoint, object data)
         {
-            client.DefaultRequestHeaders.Authorization =
-                new AuthenticationHeaderValue("Bearer", SessionManager.Token);
+            try
+            {
+                var json =
+                    JsonConvert.SerializeObject(data);
 
-            var response = await client.GetAsync(BaseUrl + endpoint);
+                var content =
+                    new StringContent(
+                        json,
+                        Encoding.UTF8,
+                        "application/json"
+                    );
 
-            return await response.Content.ReadAsStringAsync();
+                HttpResponseMessage response =
+                    await client.PostAsync(
+                        BaseUrl + endpoint,
+                        content
+                    );
+
+                response.EnsureSuccessStatusCode();
+
+                return await response.Content
+                    .ReadAsStringAsync();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    ex.Message
+                );
+
+                return "";
+            }
         }
     }
 }

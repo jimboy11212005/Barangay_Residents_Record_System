@@ -1,6 +1,5 @@
 ﻿using BRRAPI.Data;
 using BRRAPI.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,7 +7,6 @@ namespace BRRAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
     public class ResidentsController : ControllerBase
     {
         private readonly AppDbContext _context;
@@ -19,64 +17,21 @@ namespace BRRAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Resident>>> GetResidents()
+        public async Task<ActionResult<IEnumerable<Resident>>>
+            GetResidents()
         {
             return await _context.Residents.ToListAsync();
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Resident>> GetResident(int id)
-        {
-            var resident = await _context.Residents.FindAsync(id);
-
-            if (resident == null)
-            {
-                return NotFound();
-            }
-
-            return resident;
-        }
-
         [HttpPost]
-        public async Task<ActionResult<Resident>> AddResident(Resident resident)
+        public async Task<ActionResult<Resident>>
+            AddResident(Resident resident)
         {
             _context.Residents.Add(resident);
 
             await _context.SaveChangesAsync();
 
             return Ok(resident);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateResident(int id, Resident resident)
-        {
-            if (id != resident.ResidentId)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(resident).State = EntityState.Modified;
-
-            await _context.SaveChangesAsync();
-
-            return Ok("Updated Successfully");
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteResident(int id)
-        {
-            var resident = await _context.Residents.FindAsync(id);
-
-            if (resident == null)
-            {
-                return NotFound();
-            }
-
-            _context.Residents.Remove(resident);
-
-            await _context.SaveChangesAsync();
-
-            return Ok("Deleted Successfully");
         }
     }
 }

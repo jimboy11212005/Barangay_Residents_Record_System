@@ -1,49 +1,31 @@
 ﻿namespace BRRAPI.Models
 {
+    [System.ComponentModel.DataAnnotations.Schema.Table("residents")]
     public class Resident
     {
+        [System.ComponentModel.DataAnnotations.Key]
+        [System.ComponentModel.DataAnnotations.Schema.Column("resident_id")]
         public int ResidentId { get; set; }
 
-        public string QrCode { get; set; }
-
+        [System.ComponentModel.DataAnnotations.Schema.Column("first_name")]
         public string FirstName { get; set; }
 
-        public string MiddleName { get; set; }
-
+        [System.ComponentModel.DataAnnotations.Schema.Column("last_name")]
         public string LastName { get; set; }
 
-        public string Suffix { get; set; }
-
+        [System.ComponentModel.DataAnnotations.Schema.Column("gender")]
         public string Gender { get; set; }
 
-        public DateTime BirthDate { get; set; }
+        [System.ComponentModel.DataAnnotations.Schema.Column("address")]
+        public string Address { get; set; }
 
-        public string CivilStatus { get; set; }
+        [System.ComponentModel.DataAnnotations.Schema.Column("age")]
+        public int Age { get; set; }
 
-        public string Citizenship { get; set; }
-
-        public string Religion { get; set; }
-
-        public string Occupation { get; set; }
-
-        public string PhoneNumber { get; set; }
-
-        public string Email { get; set; }
-
+        [System.ComponentModel.DataAnnotations.Schema.Column("purok")]
         public string Purok { get; set; }
 
-        public string HouseNo { get; set; }
-
-        public string Street { get; set; }
-
-        public string VoterStatus { get; set; }
-
-        public string SeniorStatus { get; set; }
-
+        [System.ComponentModel.DataAnnotations.Schema.Column("pwd_status")]
         public string PwdStatus { get; set; }
-
-        public string ProfilePicture { get; set; }
-
-        public DateTime DateRegistered { get; set; }
     }
 }

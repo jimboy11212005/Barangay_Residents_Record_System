@@ -17,5 +17,11 @@ namespace BRRDesktop.Models
         public string Gender { get; set; }
 
         public string Address { get; set; }
+
+        public int Age { get; set; }
+
+        public string Purok { get; set; }
+
+        public string PwdStatus { get; set; }
     }
 }
